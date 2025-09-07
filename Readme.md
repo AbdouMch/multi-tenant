@@ -6,6 +6,7 @@ This project is based on the tutorial [Implement Multi Tenant Architecture in Sy
 
 See also : 
 - [Multi-Tenancy Architecture - System Design](https://www.geeksforgeeks.org/system-design/multi-tenancy-architecture-system-design/?utm_source=chatgpt.com)
+- [Encryption](https://github.com/defuse/php-encryption/blob/master/docs/Tutorial.md)
 
 ## ✅ Requirements
 
@@ -152,3 +153,9 @@ closer to the application, reducing database load.
 5. Application-Level Optimization:
    - Asynchronous Processing
    - Microservices Architecture
+
+## Tutorial
+
+### Design phases :
+- 2 namespaces for entities : 
+  - Main : all entities are persisted in the main database 

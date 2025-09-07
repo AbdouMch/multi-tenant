@@ -1,6 +1,8 @@
 FROM php:8.3-apache
 
 ARG DEBIAN_FRONTEND=noninteractive
+ARG UID=1000
+ARG GID=1000
 
 # Update
 RUN apt-get -y update --fix-missing && \
@@ -59,3 +61,8 @@ RUN a2enmod rewrite headers
 
 # Cleanup
 RUN rm -rf /usr/src/*
+
+RUN addgroup --gid $GID appgroup \
+    && adduser --disabled-password --gecos "" --uid $UID --gid $GID appuser
+
+USER appuser

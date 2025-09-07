@@ -1,0 +1,8 @@
+services:
+  webserver:
+    build:
+      context: "docker/webserver"
+      args:
+        UID: ${UID}
+        GID: ${GID}
+    user: "${UID}:${GID}"

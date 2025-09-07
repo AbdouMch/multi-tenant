@@ -8,6 +8,8 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "api-platform/core": "^4.1",
+        "doctrine/doctrine-bundle": "^2.16",
+        "doctrine/doctrine-migrations-bundle": "^3.4",
         "doctrine/orm": "^3.5",
         "hakam/multi-tenancy-bundle": "^2.8",
         "lexik/jwt-authentication-bundle": "^3.1",
