@@ -9,6 +9,8 @@ doctrine:
 
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
+        types:
+#            encrypted_string: App\DBAL\Type\EncryptedStringType
     orm:
         default_entity_manager: default
         auto_generate_proxy_classes: true
