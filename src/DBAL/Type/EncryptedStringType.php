@@ -9,44 +9,44 @@ use Doctrine\DBAL\Types\StringType;
 
 class EncryptedStringType extends StringType
 {
-    private Key $key;
+    private static string $dbSecretKey;
+    private static Key $key;
 
-    public function __construct(
-        private readonly string $dbSecretKey
-    )
+    public static function setDbSecretKey(string $dbSecretKey): void
     {
-    }
-
-    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): string
-    {
-        if (str_contains($value, '<ENC>')) {
-            $secret = str_replace('<ENC>', '', $value);
-
-            return Crypto::decrypt($secret, $this->getKey());
-        }
-
-        return $value;
-    }
-
-    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): string
-    {
-        if (str_contains($value, '<ENC>')) {
-            return $value;
-        }
-
-        $ciphertext = Crypto::encrypt($value, $this->getKey());
-
-        return $ciphertext . '<ENC>';
+        self::$dbSecretKey = $dbSecretKey;
     }
 
     private function getKey(): Key
     {
-        if (isset($this->key)) {
-            return $this->key;
+        if (isset(self::$key)) {
+            return self::$key;
         }
 
-        $this->key = Key::loadFromAsciiSafeString($this->dbSecretKey);
+        if (isset(self::$dbSecretKey)) {
+            self::$key = Key::loadFromAsciiSafeString(self::$dbSecretKey);
 
-        return $this->key;
+            return self::$key;
+        }
+
+        throw new \RuntimeException('Encryption key not initialized: insure that the key is injected by calling the static method setDbSecretKey()');
+    }
+
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        return Crypto::decrypt($value, $this->getKey());
+    }
+
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        return Crypto::encrypt($value, $this->getKey());
     }
 }
