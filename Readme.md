@@ -154,6 +154,53 @@ closer to the application, reducing database load.
    - Asynchronous Processing
    - Microservices Architecture
 
+## Useful commands :
+
+### MySQL :
+- Create a new user : 
+```mysql
+CREATE USER 'tenant_admin'@'%' IDENTIFIED BY 'StrongPasswordHere!';
+```
+- Delete a user :
+```mysql
+DROP USER 'username'@'host';
+```
+- Grant access :
+```mysql
+GRANT CREATE, DROP, ALTER, INDEX, INSERT, UPDATE, DELETE, SELECT, REFERENCES, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE ON *.* TO 'tenant_admin'@'%';
+```
+  - for dev/test
+```mysql
+GRANT ALL PRIVILEGES ON *.* TO 'tenant_admin'@'%' WITH GRANT OPTION;
+```
+  - Then :
+```mysql
+FLUSH PRIVILEGES;
+```
+
+### Symfony Cli:
+- Run main database migrations : 
+```shell
+php bin/console doctrine:migrations:diff
+php bin/console doctrine:migrations:migrate
+```
+- load fixture to the main DB :
+```shell
+php bin/console d:f:l --group=main
+```
+- create tenant DB:
+```shell
+php bin/console tenant:database:create
+```
+- Run migration on tenant DB:
+```shell
+php tenant:migrations:diff <dbId>
+php tenant:migrations:migrate init
+```
+- Load tenant fixtures:
+```shell
+php bin/console tenant:fixtures:load <dbId>
+```
 ## Tutorial
 
 ### Design phases :

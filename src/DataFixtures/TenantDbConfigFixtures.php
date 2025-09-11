@@ -39,7 +39,7 @@ class TenantDbConfigFixtures extends Fixture implements FixtureGroupInterface
             $newTenant->setDbUserName($dbParams['user']);
             $newTenant->setDbHost($dbParams['host']);
             $newTenant->setDbPort($dbParams['port']);
-            $newTenant->setDbPassword($this->tenantDbPasswordGenerator->generate());
+            $newTenant->setDbPassword($dbParams['password']);
             $newTenant->setDriverType(DriverTypeEnum::from($dbParams['driver']));
             $newTenant->setDatabaseStatus(DatabaseStatusEnum::DATABASE_NOT_CREATED); // it will be switched to DATABASE_CREATED when we will execute the command
             $manager->persist($newTenant);
