@@ -168,17 +168,29 @@ DROP USER 'username'@'host';
 - Grant access :
 ```mysql
 GRANT CREATE, DROP, ALTER, INDEX, INSERT, UPDATE, DELETE, SELECT, REFERENCES, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE ON *.* TO 'tenant_admin'@'%';
+FLUSH PRIVILEGES;
 ```
   - for dev/test
 ```mysql
 GRANT ALL PRIVILEGES ON *.* TO 'tenant_admin'@'%' WITH GRANT OPTION;
-```
-  - Then :
-```mysql
 FLUSH PRIVILEGES;
 ```
 
 ### Symfony Cli:
+#### Managing secrets : 
+- List all secrets with reveals
+```shell
+php bin/console secrets:list --reaveal
+```
+- Add new secret
+```shell
+php bin/console secrets:set <secret-name>
+```
+- Remove a secret
+```shell
+php bin/console secrets:remove <secret-name>
+```
+#### Managing DBs
 - Run main database migrations : 
 ```shell
 php bin/console doctrine:migrations:diff
@@ -205,4 +217,4 @@ php bin/console tenant:fixtures:load <dbId>
 
 ### Design phases :
 - 2 namespaces for entities : 
-  - Main : all entities are persisted in the main database 
+  - Main : all entities are persisted in the main database

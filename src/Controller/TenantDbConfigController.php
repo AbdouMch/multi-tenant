@@ -14,6 +14,8 @@ final class TenantDbConfigController extends AbstractController
     #[Route('/tenant/db/config', name: 'app_tenant_db_config')]
     public function index(TenantDbConfigRepository $configRepository, TenantDbPasswordGenerator $tenantDbPasswordGenerator, EntityManagerInterface $em): Response
     {
+        dump($configRepository->findAll());
+
         return $this->render('tenant_db_config/index.html.twig', [
             'controller_name' => 'TenantDbConfigController',
         ]);
