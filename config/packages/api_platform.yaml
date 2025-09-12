@@ -1,5 +1,5 @@
 api_platform:
-    title: Hello API Platform
+    title: Medical App (Multi-Tenancy tutorial)
     version: 1.0.0
     defaults:
         stateless: true

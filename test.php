@@ -4,6 +4,7 @@ use Doctrine\DBAL\Tools\DsnParser;
 
 require_once 'vendor/autoload.php';
 
+dd(bin2hex(random_bytes(32)));
 
 $parser = new DsnParser();
 

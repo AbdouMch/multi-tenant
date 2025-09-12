@@ -190,6 +190,15 @@ php bin/console secrets:set <secret-name>
 ```shell
 php bin/console secrets:remove <secret-name>
 ```
+#### Installing Lexik-JWT-Auth-Bundle
+- Generate passphrase : 
+```shell
+php -r "echo bin2hex(random_bytes(32)), PHP_EOL;"
+```
+- Generate pair key :
+```shell
+php bin/console lexik:jwt:generate-keypair
+```
 #### Managing DBs
 - Run main database migrations : 
 ```shell
