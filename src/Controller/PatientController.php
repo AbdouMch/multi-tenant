@@ -14,9 +14,9 @@ use Symfony\Component\Routing\Requirement\Requirement;
 #[Route('/patient')]
 final class PatientController extends AbstractController
 {
-    #[Route('/{establishment_id}', name: 'tenant_all_patients', requirements: ['establishment_id' => Requirement::DIGITS])]
+    #[Route('/{establishment_id}', name: 'tenant_all_patients')]
     public function index(
-        #[MapEntity(id: 'establishment_id')]
+        #[MapEntity(mapping: ['establishment_id' => 'publicId'])]
         Establishment $establishment,
         PatientRepository $patientRepository,
         EventDispatcherInterface $eventDispatcher
@@ -24,10 +24,8 @@ final class PatientController extends AbstractController
     {
         $eventDispatcher->dispatch(new SwitchDbEvent($establishment->getTenantId()));
 
-        dump($patientRepository->findAll());
-
         return $this->render('patient/index.html.twig', [
-            'controller_name' => 'PatientController',
+            'patients' => $patientRepository->findAll(),
         ]);
     }
 }

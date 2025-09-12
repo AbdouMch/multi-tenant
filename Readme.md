@@ -7,6 +7,7 @@ This project is based on the tutorial [Implement Multi Tenant Architecture in Sy
 See also : 
 - [Multi-Tenancy Architecture - System Design](https://www.geeksforgeeks.org/system-design/multi-tenancy-architecture-system-design/?utm_source=chatgpt.com)
 - [Encryption](https://github.com/defuse/php-encryption/blob/master/docs/Tutorial.md)
+- [The Comprehensive Guide to URL Parameter Encryption in PHP](https://paragonie.com/blog/2015/09/comprehensive-guide-url-parameter-encryption-in-php)
 
 ## ✅ Requirements
 
@@ -215,8 +216,8 @@ php bin/console tenant:database:create
 ```
 - Run migration on tenant DB:
 ```shell
-php tenant:migrations:diff <dbId>
-php tenant:migrations:migrate init
+php bin/console tenant:migrations:diff <dbId>
+php bin/console tenant:migrations:migrate init
 ```
 - Load tenant fixtures:
 ```shell

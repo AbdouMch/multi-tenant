@@ -3,6 +3,7 @@
 namespace App\Entity\Main;
 
 use ApiPlatform\Metadata\ApiResource;
+use App\DBAL\Mapping\GeneratedPublicId;
 use App\Repository\Main\EstablishmentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -32,6 +33,10 @@ class Establishment
      */
     #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'establishment')]
     private Collection $users;
+
+    #[ORM\Column(length: 22)]
+    #[GeneratedPublicId]
+    private string $publicId;
 
     public function __construct()
     {
@@ -105,6 +110,18 @@ class Establishment
                 $user->setEstablishment(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPublicId(): string
+    {
+        return $this->publicId;
+    }
+
+    public function setPublicId(string $publicId): static
+    {
+        $this->publicId = $publicId;
 
         return $this;
     }

@@ -16,7 +16,7 @@ class TenantDbConfigFixtures extends Fixture implements FixtureGroupInterface
     private DsnParser $dsnParser;
 
     public function __construct(
-        private readonly TenantDbPasswordGenerator $tenantDbPasswordGenerator,
+        private readonly string $tenantDbUrl,
     )
     {
         $this->dsnParser = new DsnParser();
@@ -31,7 +31,7 @@ class TenantDbConfigFixtures extends Fixture implements FixtureGroupInterface
             'cabinet4',
         ];
 
-        $dbParams = $this->dsnParser->parse($_ENV['TENANT_DEFAULT_DATABASE_URL']);
+        $dbParams = $this->dsnParser->parse($this->tenantDbUrl);
 
         foreach ($dbNames as $dbName) {
             $newTenant = new TenantDbConfig();

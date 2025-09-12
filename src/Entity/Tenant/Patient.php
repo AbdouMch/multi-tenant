@@ -3,6 +3,7 @@
 namespace App\Entity\Tenant;
 
 use ApiPlatform\Metadata\ApiResource;
+use App\DBAL\Mapping\GeneratedPublicId;
 use App\Repository\Tenant\PatientRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -17,7 +18,7 @@ class Patient
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, type: Types::STRING, unique: true)]
+    #[ORM\Column(type: Types::STRING, length: 255, unique: true)]
     private string $firstname;
 
     #[ORM\Column(length: 255)]
@@ -28,6 +29,10 @@ class Patient
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     private \DateTimeImmutable $birthDate;
+
+    #[ORM\Column(length: 12)]
+    #[GeneratedPublicId]
+    private string $publicId;
 
     public function getId(): ?int
     {
@@ -78,6 +83,18 @@ class Patient
     public function setBirthDate(\DateTimeImmutable $birthDate): static
     {
         $this->birthDate = $birthDate;
+
+        return $this;
+    }
+
+    public function getPublicId(): string
+    {
+        return $this->publicId;
+    }
+
+    public function setPublicId(string $publicId): static
+    {
+        $this->publicId = $publicId;
 
         return $this;
     }

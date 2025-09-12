@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello PatientController!{% endblock %}
+{% block title %}Hello EstablishmentController!{% endblock %}
 
 {% block body %}
 <style>
@@ -9,11 +9,10 @@
 </style>
 
 <div class="example-wrapper">
-    <h1>Patients</h1>
-
+    <h1>Establishments</h1>
     <ul>
-        {% for patient in patients %}
-            <li>{{ patient.birthDate|date('Y-m-d') }} # {{ patient.firstname|capitalize }} {{ patient.lastname|upper }} </li>
+        {% for establishment in establishments %}
+            <li><a href="{{ path('tenant_all_patients', {establishment_id: establishment.publicId}) }}">{{ establishment.name }}</a></li>
         {% endfor %}
     </ul>
 </div>
