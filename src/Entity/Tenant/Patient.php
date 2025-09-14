@@ -4,6 +4,7 @@ namespace App\Entity\Tenant;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\DBAL\Mapping\GeneratedPublicId;
+use App\DBAL\Type\GeneratedPublicIdType;
 use App\Repository\Tenant\PatientRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -30,7 +31,7 @@ class Patient
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     private \DateTimeImmutable $birthDate;
 
-    #[ORM\Column(length: 12)]
+    #[ORM\Column(type: GeneratedPublicIdType::NAME)]
     #[GeneratedPublicId]
     private string $publicId;
 

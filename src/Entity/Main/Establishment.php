@@ -4,6 +4,8 @@ namespace App\Entity\Main;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\DBAL\Mapping\GeneratedPublicId;
+use App\DBAL\Mapping\PublicIdGenerator;
+use App\DBAL\Type\GeneratedPublicIdType;
 use App\Repository\Main\EstablishmentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -34,7 +36,7 @@ class Establishment
     #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'establishment')]
     private Collection $users;
 
-    #[ORM\Column(length: 22)]
+    #[ORM\Column(type: GeneratedPublicIdType::NAME)]
     #[GeneratedPublicId]
     private string $publicId;
 

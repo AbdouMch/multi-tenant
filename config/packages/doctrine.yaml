@@ -12,6 +12,7 @@ doctrine:
         types:
             # Required secret key is registered in Kernel.php boot() method
             encrypted_string: App\DBAL\Type\EncryptedStringType
+            generated_public_id: App\DBAL\Type\GeneratedPublicIdType
     orm:
         default_entity_manager: default
         auto_generate_proxy_classes: true
