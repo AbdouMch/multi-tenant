@@ -2,7 +2,6 @@
 
 namespace App\DBAL\Mapping;
 
-use App\DBAL\Type\GeneratedPublicIdType;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
@@ -33,7 +32,7 @@ class GeneratedPublicIdListener
 
                     if (false === $classMetadata->hasField($propertyName)) {
                         throw new \InvalidArgumentException(sprintf(
-                            'GeneratedPublicId requires a mapped Doctrine field. Property %s::%s is not mapped.',
+                            'Property %s::%s must be a mapped Doctrine field.',
                             $classMetadata->getName(),
                             $propertyName
                         ));
@@ -41,13 +40,13 @@ class GeneratedPublicIdListener
 
                     $fieldMapping = $classMetadata->getFieldMapping($propertyName);
 
-                    if (GeneratedPublicIdType::NAME !== $fieldMapping->type) {
+                    if (Types::STRING !== $fieldMapping->type) {
                         throw new \InvalidArgumentException(sprintf(
-                            'GeneratedPublicId requires column type (%s). Found column type (%s) for %s::%s',
-                            Types::STRING,
-                            $fieldMapping->type,
+                            'Property %s::%s must use type "%s". Found "%s".',
                             $classMetadata->getName(),
-                            $propertyName
+                            $propertyName,
+                            Types::STRING,
+                            $fieldMapping->type
                         ));
                     }
 
@@ -55,41 +54,37 @@ class GeneratedPublicIdListener
 
                     if (isset($length) && PublicIdGenerator::DEFAULT_LENGTH !== $length && PublicIdGenerator::MORE_ENTROPY_LENGTH !== $length) {
                         throw new \InvalidArgumentException(sprintf(
-                            '%s Type length should be (%d) or (%d) for %s::%s. Found column length (%d). See %s for more information.',
-                            GeneratedPublicIdType::NAME,
+                            'Property %s::%s length must be %d or %d. Found %d.',
+                            $classMetadata->getName(),
+                            $propertyName,
                             PublicIdGenerator::DEFAULT_LENGTH,
                             PublicIdGenerator::MORE_ENTROPY_LENGTH,
-                            $classMetadata->getName(),
-                            $propertyName,
-                            $length,
-                            PublicIdGenerator::class
+                            $length
                         ));
                     }
 
-                    if (isset($fieldMapping['options']['moreEntropy']) && false === is_bool($fieldMapping['options']['moreEntropy'])) {
+                    /** @var GeneratedPublicId $attributeInstance */
+                    $attributeInstance = $attribute->newInstance();
+                    $validLength = $attributeInstance->length ?? PublicIdGenerator::getLength($attributeInstance->moreEntropy);
+
+                    if (null !== $length && $validLength !== $length) {
                         throw new \InvalidArgumentException(sprintf(
-                            '%s $options["moreEntropy"] should be of type bool for property "%s" in %s. %s given',
-                            GeneratedPublicIdType::NAME,
-                            $propertyName,
+                            'Property %s::%s length does not match %s(moreEntropy=%s).',
                             $classMetadata->getName(),
-                            gettype($fieldMapping['options']['moreEntropy'])
+                            $propertyName,
+                            GeneratedPublicId::class,
+                            $attributeInstance->moreEntropy ? 'true' : 'false'
                         ));
-                    }
-
-                    if (!$length) {
-                        $moreEntropy = $fieldMapping['options']['moreEntropy'] ?? false;
-
-                        $length = PublicIdGenerator::getLength($moreEntropy);
                     }
 
                     // force length for schema creation
-                    $fieldMapping->length = $length;
+                    $fieldMapping->length = $validLength;
 
                     // force uniqueness for schema creation
                     $fieldMapping->unique = true;
 
                     self::$configurations[$classMetadata->getName()][$propertyName] = [
-                        'length' => $length,
+                        'length' => $validLength,
                     ];
                 }
             }

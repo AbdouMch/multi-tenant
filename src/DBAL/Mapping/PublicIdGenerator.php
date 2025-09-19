@@ -6,9 +6,9 @@ namespace App\DBAL\Mapping;
  * Generates opaque public IDs for entities.
  *
  * Two entropy levels:
- * - Pass options = ['moreEntropy' => false] to use DEFAULT_LENGTH (12 chars, 72 bits)
+ * - Pass moreEntropy = false to use DEFAULT_LENGTH (12 chars, 72 bits)
  *   50% collision probability at ~68B rows
- * - Pass options = ['moreEntropy' => true] to use MORE_ENTROPY_LENGTH (16 chars, 96 bits)
+ * - Pass moreEntropy = true to use MORE_ENTROPY_LENGTH (16 chars, 96 bits)
  *   50% collision probability at ~281T rows
  */
 class PublicIdGenerator
