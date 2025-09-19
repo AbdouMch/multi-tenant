@@ -3,6 +3,7 @@
 namespace App\Repository\Main;
 
 use App\Entity\Main\Establishment;
+use App\Establishment\Dto\Establishment as EstablishmentDto;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,28 +17,21 @@ class EstablishmentRepository extends ServiceEntityRepository
         parent::__construct($registry, Establishment::class);
     }
 
-    //    /**
-    //     * @return Establishment[] Returns an array of Establishment objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('e')
-    //            ->andWhere('e.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('e.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findEstablishment(int $id)
+    {
+        return $this->createQueryBuilder('e')
+            ->select(sprintf('NEW %s(e.publicId, e.name, e.address)', EstablishmentDto::class))
+            ->where('e.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Establishment
-    //    {
-    //        return $this->createQueryBuilder('e')
-    //            ->andWhere('e.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function findEstablishments()
+    {
+        return $this->createQueryBuilder('e')
+            ->select(sprintf('NEW %s(e.publicId, e.name, e.address)', EstablishmentDto::class))
+            ->getQuery()
+            ->getResult();
+    }
 }

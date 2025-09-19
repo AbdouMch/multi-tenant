@@ -3,9 +3,12 @@
 namespace App\Entity\Main;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
 use App\DBAL\Mapping\GeneratedPublicId;
-use App\DBAL\Mapping\PublicIdGenerator;
-use App\DBAL\Type\GeneratedPublicIdType;
+use App\Establishment\Dto\Establishment as EstablishmentDto;
+use App\Establishment\Provider\EstablishmentRepresentation;
 use App\Repository\Main\EstablishmentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,7 +16,18 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EstablishmentRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new Get(
+            '/establishments/{publicId}',
+            uriVariables: ['publicId'],
+        ),
+        new GetCollection(),
+        new Post()
+    ],
+    output: EstablishmentDto::class,
+    provider: EstablishmentRepresentation::class
+)]
 class Establishment
 {
     #[ORM\Id]
@@ -36,8 +50,8 @@ class Establishment
     #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'establishment')]
     private Collection $users;
 
-    #[ORM\Column(type: GeneratedPublicIdType::NAME)]
-    #[GeneratedPublicId]
+    #[ORM\Column(type: 'string')]
+    #[GeneratedPublicId(moreEntropy: false)]
     private string $publicId;
 
     public function __construct()
