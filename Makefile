@@ -3,6 +3,7 @@ DOCKER = docker
 DOCKER_COMP = docker compose --env-file docker.env
 DOCKER_COMP_EXEC = docker compose --env-file docker.env exec
 PHP_EXEC = $(DOCKER_COMP_EXEC) webserver
+PHP_EXEC_ROOT = $(DOCKER_COMP_EXEC) --user root webserver
 
 DOCKER_CONTAINERS = $(shell docker ps -q -f "name=medical-app-dev*")
 MYSQL_USER?=medical-app## Do `make <target> ... MYSQL_USER=<something> ...` to define the database user
@@ -85,13 +86,13 @@ xdebug: ## Enable/Disable Xdebug in webserver container
 	$(eval action:=$(filter-out $@,$(MAKECMDGOALS)))
 	@if [ "$(action)" = "on" ]; then\
 		echo "Enabling Xdebug in webserver container...";\
-		$(PHP_EXEC) /usr/local/bin/xdebug.sh enable;\
-		$(PHP_EXEC) service apache2 reload;\
+		$(PHP_EXEC_ROOT) /usr/local/bin/xdebug.sh enable;\
+		$(PHP_EXEC_ROOT) service apache2 reload;\
 	fi
 	@if [ "$(action)" = "off" ]; then\
 		echo "Disabling Xdebug in webserver container...";\
-		$(PHP_EXEC) /usr/local/bin/xdebug.sh  disable;\
-		$(PHP_EXEC) service apache2 reload;\
+		$(PHP_EXEC_ROOT) /usr/local/bin/xdebug.sh  disable;\
+		$(PHP_EXEC_ROOT) service apache2 reload;\
 	fi
 %:
 	@:

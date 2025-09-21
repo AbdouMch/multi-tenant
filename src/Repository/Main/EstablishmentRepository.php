@@ -3,7 +3,7 @@
 namespace App\Repository\Main;
 
 use App\Entity\Main\Establishment;
-use App\Establishment\Dto\Establishment as EstablishmentDto;
+use App\Establishment\Establishment as EstablishmentDto;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,14 +17,14 @@ class EstablishmentRepository extends ServiceEntityRepository
         parent::__construct($registry, Establishment::class);
     }
 
-    public function findEstablishment(int $id)
+    public function findEstablishment(string $publicId)
     {
         return $this->createQueryBuilder('e')
             ->select(sprintf('NEW %s(e.publicId, e.name, e.address)', EstablishmentDto::class))
-            ->where('e.id = :id')
-            ->setParameter('id', $id)
+            ->where('e.publicId = :publicId')
+            ->setParameter('publicId', $publicId)
             ->getQuery()
-            ->getResult();
+            ->getOneOrNullResult();
     }
 
     public function findEstablishments()

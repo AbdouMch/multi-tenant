@@ -5,9 +5,8 @@ namespace App\Entity\Main;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Post;
 use App\DBAL\Mapping\GeneratedPublicId;
-use App\Establishment\Dto\Establishment as EstablishmentDto;
+use App\Establishment\Establishment as EstablishmentDto;
 use App\Establishment\Provider\EstablishmentRepresentation;
 use App\Repository\Main\EstablishmentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -19,14 +18,17 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource(
     operations: [
         new Get(
-            '/establishments/{publicId}',
-            uriVariables: ['publicId'],
+            uriTemplate: '/establishments/{id}',
+            uriVariables: ['id' => 'publicId'],
+            requirements: ['id' => '[a-zA-Z0-9_-]+'],
         ),
-        new GetCollection(),
-        new Post()
+        new GetCollection(
+            uriTemplate: '/establishments',
+            itemUriTemplate: '/establishments/{publicId}',
+        ),
     ],
     output: EstablishmentDto::class,
-    provider: EstablishmentRepresentation::class
+    provider: EstablishmentRepresentation::class,
 )]
 class Establishment
 {
