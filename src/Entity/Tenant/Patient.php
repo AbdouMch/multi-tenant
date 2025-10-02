@@ -2,7 +2,6 @@
 
 namespace App\Entity\Tenant;
 
-use ApiPlatform\Metadata\ApiResource;
 use App\DBAL\Mapping\GeneratedPublicId;
 use App\Repository\Tenant\PatientRepository;
 use Doctrine\DBAL\Types\Types;
@@ -10,7 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PatientRepository::class)]
 #[ORM\Table(name: 'tenant_patient')]
-#[ApiResource]
 class Patient
 {
     #[ORM\Id]

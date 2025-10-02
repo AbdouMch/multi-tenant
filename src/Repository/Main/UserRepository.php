@@ -5,14 +5,16 @@ namespace App\Repository\Main;
 use App\Entity\Main\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @extends ServiceEntityRepository<User>
  */
-class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
+class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface, UserLoaderInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -33,28 +35,16 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-    //    /**
-    //     * @return User[] Returns an array of User objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('u.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function loadUserByIdentifier(string $identifier): ?User
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->select('u')
+            ->addSelect('e')
+            ->leftJoin('u.establishment', 'e')
+            ->where('u.email = :identifier')
+            ->setParameter('identifier', $identifier)
+            ;
 
-    //    public function findOneBySomeField($value): ?User
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 }

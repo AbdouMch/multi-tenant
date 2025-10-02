@@ -8,7 +8,8 @@ security:
         app_user_provider:
             entity:
                 class: App\Entity\Main\User
-                property: email
+                # https://symfony.com/doc/6.4/security/user_providers.html#using-a-custom-query-to-load-the-user
+                # property: email
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -42,6 +43,33 @@ security:
         - { path: ^/contexts, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI contexts
         - { path: ^/auth, roles: PUBLIC_ACCESS }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
+
+    role_hierarchy:
+        ROLE_SUPER_ADMIN:
+            - ROLE_ADMIN
+            - ROLE_TENANT_ADMIN
+
+        ROLE_ADMIN:
+            - ROLE_USER
+            - ROLE_USER_ALL
+
+        ROLE_USER_ALL:
+            - ROLE_USER_READ
+            - ROLE_USER_EDIT
+            - ROLE_USER_CREATE
+            - ROLE_USER_DELETE
+
+        ROLE_TENANT_ADMIN:
+            - ROLE_USER
+            - ROLE_PATIENT_ALL
+
+        ROLE_PATIENT_ALL:
+            - ROLE_PATIENT_READ_ALL
+            - ROLE_PATIENT_READ
+            - ROLE_PATIENT_CREATE
+            - ROLE_PATIENT_EDIT_ALL
+            - ROLE_PATIENT_EDIT
+            - ROLE_PATIENT_DELETE
 
 when@test:
     security:
