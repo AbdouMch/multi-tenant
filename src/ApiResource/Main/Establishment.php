@@ -8,14 +8,14 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Entity\Main\Establishment as EstablishmentEntity;
-use App\Provider\Main\EstablishmentProvider;
+use Symfony\Component\Serializer\Attribute\SerializedName;
 
 #[ApiResource(
     operations: [
         new Get(
             uriTemplate: '/establishments/{id}',
             uriVariables: [
-                'id' => 'id',
+                'id' => 'publicId',
             ],
             requirements: ['id' => '[a-zA-Z0-9_-]+'],
         ),
@@ -25,14 +25,14 @@ use App\Provider\Main\EstablishmentProvider;
         ),
     ],
     security: "is_granted('ROLE_ADMIN')",
-    provider: EstablishmentProvider::class,
     stateOptions: new Options(EstablishmentEntity::class),
 )]
 class Establishment
 {
     public function __construct(
         #[ApiProperty(identifier: true)]
-        public string $id,
+        #[SerializedName('id')]
+        public string             $publicId,
         public string $name,
         public string $address,
     )

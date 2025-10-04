@@ -9,6 +9,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Entity\Tenant\Patient as PatientEntity;
 use App\Provider\Tenant\PatientProvider;
+use Symfony\Component\Serializer\Attribute\SerializedName;
 
 #[ApiResource(
     operations: [
@@ -16,7 +17,7 @@ use App\Provider\Tenant\PatientProvider;
             uriTemplate: '/admin/tenants/{tenantId}/patients/{id}',
             uriVariables: [
                 'tenantId' => 'tenantId',
-                'id' => 'id',
+                'id' => 'publicId',
             ],
             requirements: ['id' => '[a-zA-Z0-9_-]+', 'tenantId' => '[a-zA-Z0-9_-]+'],
         ),
@@ -37,6 +38,9 @@ use App\Provider\Tenant\PatientProvider;
     operations: [
         new Get(
             uriTemplate: '/patients/{id}',
+            uriVariables: [
+                'id' => 'publicId',
+            ],
             requirements: ['id' => '[a-zA-Z0-9_-]+'],
         ),
         new GetCollection(
@@ -51,7 +55,8 @@ class Patient
 {
     public function __construct(
         #[ApiProperty(identifier: true)]
-        public string             $id,
+        #[SerializedName('id')]
+        public string             $publicId,
         public string             $firstname,
         public string             $lastname,
         public \DateTimeImmutable $birthdate,

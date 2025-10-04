@@ -4,7 +4,6 @@ namespace App\Provider\Tenant;
 
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\HttpOperation;
-use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Tenant\Patient;
@@ -40,26 +39,9 @@ class PatientProvider implements ProviderInterface
 
         unset($uriVariables['tenantId'], $context['uri_variables']['tenantId']);
 
-        if (isset($uriVariables['id'])) {
-            $uriVariables['publicId'] = $uriVariables['id'];
-            unset($uriVariables['id']);
-        }
-
-        if (isset($context['uri_variables']['id'])) {
-            $context['uri_variables']['publicId'] = $context['uri_variables']['id'];
-            unset($context['uri_variables']['id']);
-        }
-
         if ($operation instanceof HttpOperation) {
             $operationUriVariables = $operation->getUriVariables();
             unset($operationUriVariables['tenantId']);
-
-            if (isset($operationUriVariables['id'])) {
-                /** @var Link $idLink */
-                $idLink = $operationUriVariables['id']->withIdentifiers(['publicId']);
-                unset($operationUriVariables['id']);
-                $operationUriVariables['publicId'] = $idLink;
-            }
 
             $operation = $operation->withUriVariables($operationUriVariables);
             $context['operation'] = $operation;
