@@ -13,7 +13,7 @@ class TenantContext
     private ?string $tenantPublicId = null;
 
     public function __construct(
-        private EstablishmentRepository $establishmentRepository,
+        private readonly EstablishmentRepository  $establishmentRepository,
         private readonly EventDispatcherInterface $dispatcher
     )
     {

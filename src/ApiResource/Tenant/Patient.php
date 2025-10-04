@@ -2,32 +2,36 @@
 
 namespace App\ApiResource\Tenant;
 
+use ApiPlatform\Doctrine\Orm\State\Options;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use App\Tenant\Provider\PatientRepresentation;
+use App\Entity\Tenant\Patient as PatientEntity;
+use App\Provider\Tenant\PatientProvider;
 
 #[ApiResource(
     operations: [
-        new GetCollection(
-            uriTemplate: '/admin/tenants/{tenantId}/patients',
-            uriVariables: [
-                'tenantId',
-            ],
-            security: "is_granted('ROLE_SUPER_ADMIN')",
-            provider: PatientRepresentation::class,
-        ),
         new Get(
             uriTemplate: '/admin/tenants/{tenantId}/patients/{id}',
             uriVariables: [
-                'tenantId',
-                'id',
+                'tenantId' => 'tenantId',
+                'id' => 'id',
             ],
-            security: "is_granted('ROLE_SUPER_ADMIN')",
-            provider: PatientRepresentation::class,
+            requirements: ['id' => '[a-zA-Z0-9_-]+', 'tenantId' => '[a-zA-Z0-9_-]+'],
+        ),
+        new GetCollection(
+            uriTemplate: '/admin/tenants/{tenantId}/patients',
+            uriVariables: [
+                'tenantId' => 'tenantId',
+            ],
+            requirements: ['tenantId' => '[a-zA-Z0-9_-]+'],
+            itemUriTemplate: '/admin/tenants/{tenantId}/patients/{id}',
         ),
     ],
+    security: "is_granted('ROLE_SUPER_ADMIN')",
+    provider: PatientProvider::class,
+    stateOptions: new Options(PatientEntity::class),
 )]
 #[ApiResource(
     operations: [
@@ -40,7 +44,8 @@ use App\Tenant\Provider\PatientRepresentation;
         )
     ],
     security: "is_granted('ROLE_TENANT_ADMIN')",
-    provider: PatientRepresentation::class,
+    provider: PatientProvider::class,
+    stateOptions: new Options(PatientEntity::class),
 )]
 class Patient
 {
@@ -52,19 +57,9 @@ class Patient
         public \DateTimeImmutable $birthdate,
         #[ApiProperty(security: "is_granted('ROLE_PATIENT_READ_ALL')")]
         public ?string            $nir = null,
-        #[ApiProperty(readable: false)]
+        #[ApiProperty(readable: false, identifier: false)]
         public ?string            $tenantId = null,
     )
     {
-    }
-
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    public function setId(string $id): void
-    {
-        $this->id = $id;
     }
 }
