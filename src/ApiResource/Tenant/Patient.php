@@ -2,14 +2,19 @@
 
 namespace App\ApiResource\Tenant;
 
+use ApiPlatform\Doctrine\Orm\Filter\ExactFilter;
 use ApiPlatform\Doctrine\Orm\State\Options;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\QueryParameter;
 use App\Entity\Tenant\Patient as PatientEntity;
+use App\Filter\PartialSearchFilter as AppPartialSearchFilter;
 use App\Provider\Tenant\PatientProvider;
+use Symfony\Component\Serializer\Attribute\Context;
 use Symfony\Component\Serializer\Attribute\SerializedName;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 #[ApiResource(
     operations: [
@@ -27,7 +32,7 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
                 'tenantId' => 'tenantId',
             ],
             requirements: ['tenantId' => '[a-zA-Z0-9_-]+'],
-            itemUriTemplate: '/admin/tenants/{tenantId}/patients/{id}',
+            itemUriTemplate: '/admin/tenants/{tenantId}/patients/{id}'
         ),
     ],
     security: "is_granted('ROLE_SUPER_ADMIN')",
@@ -45,11 +50,24 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
         ),
         new GetCollection(
             uriTemplate: '/patients',
+            parameters: [
+                'search[:property]' => new QueryParameter(
+                    filter: AppPartialSearchFilter::class,
+                    description: 'search by firstname and lastname',
+                    properties: ['firstname', 'lastname'],
+                ),
+                'nir' => new QueryParameter(
+                    filter: new ExactFilter(),
+                    property: 'nir',
+                )
+            ],
+            itemUriTemplate: '/patients/{id}',
         )
     ],
+    paginationClientItemsPerPage: true,
     security: "is_granted('ROLE_TENANT_ADMIN')",
     provider: PatientProvider::class,
-    stateOptions: new Options(PatientEntity::class),
+    stateOptions: new Options(PatientEntity::class)
 )]
 class Patient
 {
@@ -59,6 +77,7 @@ class Patient
         public string             $publicId,
         public string             $firstname,
         public string             $lastname,
+        #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y/m/d'])]
         public \DateTimeImmutable $birthdate,
         #[ApiProperty(security: "is_granted('ROLE_PATIENT_READ_ALL')")]
         public ?string            $nir = null,

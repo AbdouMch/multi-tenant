@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Security;
+namespace App\Security\EventListener;
 
 use App\Entity\Main\User;
+use App\Security\TenantContext;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;
 
@@ -24,21 +25,4 @@ final class TenantResolverListener
             $this->tenantContext->setTenantId($establishment->getTenantId());
         }
     }
-
-//    #[AsEventListener(event: 'kernel.request', priority: 0)]
-//    public function onRequestEvent(RequestEvent $event): void
-//    {
-//        $reqParameters = $event->getRequest()->attributes;
-//
-//        if ($reqParameters->get('tenant_aware', false)) {
-//            $tenantIdUriVariable = $reqParameters->get('tenantIdUriVariable', 'tenantId');
-//            $publicId = $reqParameters->get($tenantIdUriVariable);
-//
-//            if (null === $publicId) {
-//                throw new \InvalidArgumentException('Tenant id must be provided');
-//            }
-//
-//            $this->tenantContext->setTenantIdByPublicId($publicId);
-//        }
-//    }
 }

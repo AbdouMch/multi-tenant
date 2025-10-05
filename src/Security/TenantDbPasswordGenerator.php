@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Security;
 
 use Symfony\Component\String\ByteString;
 

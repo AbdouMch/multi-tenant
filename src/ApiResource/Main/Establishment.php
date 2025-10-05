@@ -2,11 +2,13 @@
 
 namespace App\ApiResource\Main;
 
+use ApiPlatform\Doctrine\Orm\Filter\PartialSearchFilter;
 use ApiPlatform\Doctrine\Orm\State\Options;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\QueryParameter;
 use App\Entity\Main\Establishment as EstablishmentEntity;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 
@@ -21,6 +23,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
         ),
         new GetCollection(
             uriTemplate: '/establishments',
+            parameters: [
+                'search' => new QueryParameter(
+                    filter: new PartialSearchFilter(),
+                    property: 'name',
+                ),
+            ],
             itemUriTemplate: '/establishments/{id}',
         ),
     ],

@@ -16,7 +16,7 @@ class Patient
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::STRING, length: 255, unique: true)]
+    #[ORM\Column(type: Types::STRING, length: 255)]
     private string $firstname;
 
     #[ORM\Column(length: 255)]
