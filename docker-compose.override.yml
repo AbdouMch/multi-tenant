@@ -6,3 +6,14 @@ services:
         UID: ${UID}
         GID: ${GID}
     user: "${UID}:${GID}"
+###> symfony/mailer ###
+  mailer:
+    image: axllent/mailpit
+    container_name: "${COMPOSE_PROJECT_NAME}-mailer"
+    ports:
+      - "1080:8025"
+      - "1025:1025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+###< symfony/mailer ###

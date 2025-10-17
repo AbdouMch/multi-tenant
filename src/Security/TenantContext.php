@@ -3,7 +3,6 @@
 namespace App\Security;
 
 use App\Repository\Main\EstablishmentRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Hakam\MultiTenancyBundle\Event\SwitchDbEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -21,7 +20,9 @@ class TenantContext
 
     public function setTenantId(string $tenantId): void
     {
-        $establishment = $this->establishmentRepository->find($tenantId);
+        $establishment = $this->establishmentRepository->findOneBy([
+            'tenantId' => $tenantId,
+        ]);
 
         if (null === $establishment) {
             throw new \InvalidArgumentException('Invalid tenant id');

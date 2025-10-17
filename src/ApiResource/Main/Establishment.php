@@ -8,8 +8,10 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\QueryParameter;
 use App\Entity\Main\Establishment as EstablishmentEntity;
+use App\State\Main\EstablishmentStateProcessor;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 
 #[ApiResource(
@@ -30,6 +32,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
                 ),
             ],
             itemUriTemplate: '/establishments/{id}',
+        ),
+        new Post(
+            validationContext: ['groups' => ['Default']],
+            input: NewEstablishment::class,
+            validate: true,
+            processor: EstablishmentStateProcessor::class,
         ),
     ],
     security: "is_granted('ROLE_ADMIN')",
