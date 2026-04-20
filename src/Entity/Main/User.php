@@ -2,17 +2,23 @@
 
 namespace App\Entity\Main;
 
+use App\Entity\Loggable\LogEntry;
 use App\Repository\Main\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`User`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[Gedmo\Loggable(logEntryClass: LogEntry::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    public const string ROLE_TENANT_ADMIN="ROLE_TENANT_ADMIN";
+    use TimestampableEntity;
+
+    public const string ROLE_TENANT_ADMIN = 'ROLE_TENANT_ADMIN';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -20,22 +26,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, nullable: false)]
+    #[Gedmo\Versioned]
     private ?string $email = null;
 
     /**
      * @var list<string> The user roles
      */
     #[ORM\Column(nullable: false)]
+    #[Gedmo\Versioned]
     private array $roles = [];
 
     /**
      * @var null|string The hashed password
      */
     #[ORM\Column(nullable: false)]
+    #[Gedmo\Versioned]
     private ?string $password = null;
+
+    #[ORM\Column(options: ['default' => false])]
+    #[Gedmo\Versioned]
+    private bool $enabled = false;
 
     #[ORM\ManyToOne(targetEntity: Establishment::class, inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: true)]
+    #[Gedmo\Versioned]
     private ?Establishment $establishment = null;
 
     public function __construct()
@@ -102,6 +116,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
+    }
+
+    public function setEnabled(bool $enabled): static
+    {
+        $this->enabled = $enabled;
 
         return $this;
     }

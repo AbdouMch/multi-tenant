@@ -14,9 +14,10 @@ class PasswordResetSender
 {
     public function __construct(
         private readonly ResetPasswordHelperInterface $resetPasswordHelper,
-        private readonly MailerInterface $mailer,
-    )
-    {
+        private readonly MailerInterface              $mailer,
+        private readonly string                       $mailerFromAddress,
+        private readonly string                       $mailerFromName,
+    ) {
     }
 
     /**
@@ -28,13 +29,11 @@ class PasswordResetSender
         $resetToken = $this->resetPasswordHelper->generateResetToken($user);
 
         $email = (new TemplatedEmail())
-            ->from(new Address('mailer@your-domain.com', 'Acme Mail Bot'))
+            ->from(new Address($this->mailerFromAddress, $this->mailerFromName))
             ->to((string) $user->getEmail())
-            ->subject('Please change your password')
+            ->subject('Please set your password')
             ->htmlTemplate('reset_password/email.html.twig')
-            ->context([
-                'resetToken' => $resetToken,
-            ])
+            ->context(['resetToken' => $resetToken])
         ;
 
         $this->mailer->send($email);

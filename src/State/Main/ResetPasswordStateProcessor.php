@@ -20,12 +20,12 @@ use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 class ResetPasswordStateProcessor implements ProcessorInterface
 {
     public function __construct(
-        private readonly UserRepository $userRepository,
+        private readonly UserRepository               $userRepository,
         private readonly ResetPasswordHelperInterface $resetPasswordHelper,
-        private readonly MailerInterface $mailer,
-
-    )
-    {
+        private readonly MailerInterface              $mailer,
+        private readonly string                       $mailerFromAddress,
+        private readonly string                       $mailerFromName,
+    ) {
     }
 
     /**
@@ -34,36 +34,31 @@ class ResetPasswordStateProcessor implements ProcessorInterface
      */
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): ResetPasswordResponse
     {
-        $user = $this->userRepository->findOneBy([
-            'email' => $data->getEmail(),
-        ]);
+        // Generic message — never reveal whether an account exists.
+        $genericMessage = 'If an account matching your email exists, a reset link has been sent.';
 
-        // Do not reveal whether a user account was found or not.
-        $errorMessage = "If an account matching your email exists, then an email was just sent that contains a link that you can use to reset your password.";
+        $user = $this->userRepository->findOneBy(['email' => $data->email]);
 
         if (!$user) {
-            return new ResetPasswordResponse($errorMessage);
+            return new ResetPasswordResponse($genericMessage);
         }
 
         try {
             $resetToken = $this->resetPasswordHelper->generateResetToken($user);
-        } catch (ResetPasswordExceptionInterface $e) {
-            return new ResetPasswordResponse($errorMessage);
+        } catch (ResetPasswordExceptionInterface) {
+            return new ResetPasswordResponse($genericMessage);
         }
 
         $email = (new TemplatedEmail())
-            ->from(new Address('mailer@your-domain.com', 'Acme Mail Bot'))
+            ->from(new Address($this->mailerFromAddress, $this->mailerFromName))
             ->to((string) $user->getEmail())
             ->subject('Your password reset request')
             ->htmlTemplate('reset_password/email.html.twig')
-            ->context([
-                'resetToken' => $resetToken,
-            ])
+            ->context(['resetToken' => $resetToken])
         ;
 
         $this->mailer->send($email);
 
-
-        return new ResetPasswordResponse("An email has been sent to your registered email address.");
+        return new ResetPasswordResponse($genericMessage);
     }
 }

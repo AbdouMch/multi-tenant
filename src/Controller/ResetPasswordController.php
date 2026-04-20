@@ -55,7 +55,8 @@ class ResetPasswordController extends AbstractController
                 $e->getReason()
             ));
 
-            return $this->redirectToRoute('app_forgot_password_request');
+
+            return $this->render('reset_password/reset_error.html.twig');
         }
 
         // The token is valid; allow the user to change their password.
@@ -71,6 +72,7 @@ class ResetPasswordController extends AbstractController
 
             // Encode(hash) the plain password, and set it.
             $user->setPassword($passwordHasher->hashPassword($user, $plainPassword));
+            $user->setEnabled(true);
             $this->entityManager->flush();
 
             // The session is cleaned up after the password has been changed.

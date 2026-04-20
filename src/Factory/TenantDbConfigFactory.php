@@ -3,7 +3,6 @@
 namespace App\Factory;
 
 use App\Entity\Main\TenantDbConfig;
-use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Tools\DsnParser;
 use Hakam\MultiTenancyBundle\Enum\DatabaseStatusEnum;
 use Hakam\MultiTenancyBundle\Enum\DriverTypeEnum;
@@ -58,24 +57,6 @@ final class TenantDbConfigFactory extends PersistentObjectFactory
         }
 
         $attributes = array_merge($this->defaults(), $attributes);
-
-        $dbName = $attributes['dbName'];
-        $dbUser = $attributes['dbUserName'];
-        $dbPass = $attributes['dbPassword'];
-
-        $connection = DriverManager::getConnection([
-            'driver' => 'pdo_mysql',
-            'host' => $this->dbParams['host'],
-            'port' => $this->dbParams['port'],
-            'user' => $this->dbParams['user'],
-            'password' => $this->dbParams['password'],
-            'charset' => 'utf8',
-        ]);
-
-        $connection->executeQuery(sprintf("CREATE DATABASE IF NOT EXISTS %s", $dbName));
-        $connection->executeQuery(sprintf("CREATE USER IF NOT EXISTS '%s'@'%%' IDENTIFIED BY '%s'", $dbUser, $dbPass));
-        $connection->executeQuery(sprintf("GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX ON %s.* TO '%s'@'%%'", $dbName, $dbUser));
-        $connection->executeQuery("FLUSH PRIVILEGES");
 
         return parent::create($attributes);
     }

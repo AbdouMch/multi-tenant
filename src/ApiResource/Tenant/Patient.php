@@ -16,29 +16,29 @@ use Symfony\Component\Serializer\Attribute\Context;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
-#[ApiResource(
-    operations: [
-        new Get(
-            uriTemplate: '/admin/tenants/{tenantId}/patients/{id}',
-            uriVariables: [
-                'tenantId' => 'tenantId',
-                'id' => 'publicId',
-            ],
-            requirements: ['id' => '[a-zA-Z0-9_-]+', 'tenantId' => '[a-zA-Z0-9_-]+'],
-        ),
-        new GetCollection(
-            uriTemplate: '/admin/tenants/{tenantId}/patients',
-            uriVariables: [
-                'tenantId' => 'tenantId',
-            ],
-            requirements: ['tenantId' => '[a-zA-Z0-9_-]+'],
-            itemUriTemplate: '/admin/tenants/{tenantId}/patients/{id}'
-        ),
-    ],
-    security: "is_granted('ROLE_SUPER_ADMIN')",
-    provider: PatientProvider::class,
-    stateOptions: new Options(PatientEntity::class),
-)]
+//#[ApiResource(
+//    operations: [
+//        new Get(
+//            uriTemplate: '/admin/tenants/{tenantId}/patients/{id}',
+//            uriVariables: [
+//                'tenantId' => 'tenantId',
+//                'id' => 'publicId',
+//            ],
+//            requirements: ['id' => '[a-zA-Z0-9_-]+', 'tenantId' => '[a-zA-Z0-9_-]+'],
+//        ),
+//        new GetCollection(
+//            uriTemplate: '/admin/tenants/{tenantId}/patients',
+//            uriVariables: [
+//                'tenantId' => 'tenantId',
+//            ],
+//            requirements: ['tenantId' => '[a-zA-Z0-9_-]+'],
+//            itemUriTemplate: '/admin/tenants/{tenantId}/patients/{id}'
+//        ),
+//    ],
+//    security: "is_granted('ROLE_SUPER_ADMIN')",
+//    provider: PatientProvider::class,
+//    stateOptions: new Options(PatientEntity::class),
+//)]
 #[ApiResource(
     operations: [
         new Get(
@@ -65,7 +65,7 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
         )
     ],
     paginationClientItemsPerPage: true,
-    security: "is_granted('ROLE_TENANT_ADMIN')",
+    security: "null !== user.getEstablishment() && is_granted('PATIENT_VIEW', user.getEstablishment())",
     provider: PatientProvider::class,
     stateOptions: new Options(PatientEntity::class)
 )]

@@ -30,7 +30,20 @@ doctrine:
                         dir: '%kernel.project_dir%/src/Entity/Main'
                         prefix: 'App\Entity\Main'
                         alias: App
-
+                    gedmo_loggable:
+                        type: attribute
+                        prefix: App\Entity\Loggable
+                        dir: '%kernel.project_dir%/src/Entity/Loggable'
+                        alias: GedmoLoggable # (optional) it will default to the name set for the mapping
+                        is_bundle: false
+            tenant:
+                mappings:
+                    gedmo_loggable:
+                        type: attribute
+                        prefix: App\Entity\Loggable
+                        dir: '%kernel.project_dir%/src/Entity/Loggable'
+                        alias: GedmoLoggable # (optional) it will default to the name set for the mapping
+                        is_bundle: false
 when@test:
     doctrine:
         dbal:

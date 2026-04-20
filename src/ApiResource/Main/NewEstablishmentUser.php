@@ -7,18 +7,12 @@ use App\Validator\EntityExists;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[EntityExists(entityFQCN: User::class, fields: ['email'])]
-class NewEstablishmentUser
+readonly class NewEstablishmentUser
 {
-    #[Assert\Email]
-    private string $email;
-
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): void
-    {
-        $this->email = $email;
+    public function __construct(
+        #[Assert\NotBlank]
+        #[Assert\Email]
+        public string $email,
+    ) {
     }
 }
